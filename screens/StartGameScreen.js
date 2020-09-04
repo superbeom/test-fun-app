@@ -2,24 +2,33 @@ import React, { useState } from "react";
 import {
   StyleSheet,
   View,
-  Button,
+  Text,
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
 } from "react-native";
+import { vw, vh } from "react-native-expo-viewport-units";
 
 import Card from "../components/Card";
-import Input from "../components/Input";
-import NumberContainer from "../components/NumberContainer";
+import StartButton from "../components/StartButton";
 import MainButton from "../components/MainButton";
-import TitleText from "../components/TitleText";
-import BodyText from "../components/BodyText";
-import colors from "../constants/colors";
 
-const StartGameScreen = (props) => {
+const StartGameScreen = ({ onStartGame }) => {
   const [enteredValue, setEnteredValue] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState();
+
+  const checkResetGame = () => {
+    Alert.alert(
+      "Seriously reset game?",
+      "",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Reset game", onPress: () => null },
+      ],
+      { cancelable: true }
+    );
+  };
 
   const numberInputHandler = (inputText) => {
     /* [0-9]: 0~9 // ^: not // [^0-9]: not 0~9 -> 0~9가 아니면, ""로 대체해라 */
@@ -47,53 +56,25 @@ const StartGameScreen = (props) => {
     Keyboard.dismiss();
   };
 
-  let confirmedOutput;
-
-  if (confirmed) {
-    confirmedOutput = (
-      <Card style={styles.summaryContainer}>
-        <BodyText>You selected</BodyText>
-        <NumberContainer>{selectedNumber}</NumberContainer>
-        <MainButton onPress={props.onStartGame.bind(this, selectedNumber)}>
-          START GAME
-        </MainButton>
-      </Card>
-    );
-  }
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.screen}>
-        <TitleText style={styles.title}>Start a New Game!</TitleText>
-        <Card style={styles.inputContainer}>
-          <BodyText>Select a Number</BodyText>
-          <Input
-            style={styles.input}
-            maxLength={2}
-            autoCapitalize={"none"}
-            autoCorrect={false}
-            keyboardType={"number-pad"}
-            onChangeText={numberInputHandler}
-            value={enteredValue}
-          />
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button
-                title={"Reset"}
-                onPress={resetInputHandler}
-                color={colors.accent}
-              />
+        <View style={styles.scoreContainer}>
+          <Card style={styles.card}>
+            <View>
+              <Text style={styles.cardText}>YOUR SCORE: </Text>
             </View>
-            <View style={styles.button}>
-              <Button
-                title={"Confirm"}
-                onPress={confirmInputHandler}
-                color={colors.primary}
-              />
+            <View>
+              <Text style={styles.cardText}>CURRENT STAGE: </Text>
             </View>
-          </View>
-        </Card>
-        {confirmedOutput}
+          </Card>
+        </View>
+        <View style={styles.gameStartContainer}>
+          <StartButton onPress={onStartGame}>GAME{"\n"}START</StartButton>
+        </View>
+        <View style={styles.resetGameContainer}>
+          <MainButton onPress={checkResetGame}>RESET GAME</MainButton>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -105,31 +86,28 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
   },
-  title: {
-    fontSize: 20,
-    marginVertical: 10,
-  },
-  inputContainer: {
-    width: 300,
-    maxWidth: "80%",
-    alignItems: "center",
-  },
-  buttonContainer: {
-    flexDirection: "row",
+  scoreContainer: {
+    flex: 1,
     width: "100%",
-    justifyContent: "space-between",
-    paddingHorizontal: 15,
-  },
-  button: {
-    width: "40%",
-  },
-  input: {
-    width: 50,
-    textAlign: "center",
-  },
-  summaryContainer: {
-    marginTop: 20,
     alignItems: "center",
+  },
+  card: {
+    width: vw(80),
+    maxWidth: "80%",
+    height: vh(13),
+    justifyContent: "space-around",
+  },
+  cardText: {
+    fontSize: vw(4.5),
+    fontWeight: "700",
+  },
+  gameStartContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  resetGameContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
   },
 });
 

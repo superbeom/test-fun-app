@@ -1,68 +1,78 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text, Image } from "react-native";
 import * as Font from "expo-font";
-import { AppLoading } from "expo";
 
 import Header from "./components/Header";
 import StartGameScreen from "./screens/StartGameScreen";
 import GameScreen from "./screens/GameScreen";
 import GameOverScreen from "./screens/GameOverScreen";
 
-const fetchFonts = () => {
-  return Font.loadAsync({
-    "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
-    "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
-  });
-};
-
 export default function App() {
-  const [userNumber, setUserNumber] = useState();
-  const [guessRounds, setGuessRounds] = useState(0);
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [startGame, setStartGame] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+  const [stage, setStage] = useState(1);
 
-  if (!dataLoaded) {
-    return (
-      <AppLoading
-        startAsync={fetchFonts}
-        onFinish={() => setDataLoaded(true)}
-        onError={(error) => console.log(error)}
+  const startGameHandler = () => {
+    setStartGame(true);
+  };
+
+  const gameOverHandler = () => {
+    setGameOver(true);
+  };
+
+  const goHomeHandler = () => {
+    setStartGame(false);
+    setGameOver(false);
+  };
+
+  const preLoad = async () => {
+    try {
+      await Font.loadAsync({
+        "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
+        "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
+      });
+      setLoading(false);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
+  useEffect(() => {
+    preLoad();
+  }, []);
+
+  return loading ? (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Image
+        style={{ width: 115, height: 115 }}
+        source={require("./assets/icon.png")}
       />
-    );
-  }
-
-  const configureNewGameHandler = () => {
-    setUserNumber(null);
-    setGuessRounds(0);
-  };
-
-  const startGameHandler = (selectedNumber) => {
-    setUserNumber(selectedNumber);
-  };
-
-  const gameOverHandler = (numOfRounds) => {
-    setGuessRounds(numOfRounds);
-  };
-
-  let content = <StartGameScreen onStartGame={startGameHandler} />;
-
-  if (userNumber && guessRounds <= 0) {
-    content = (
-      <GameScreen userChoice={userNumber} onGameOver={gameOverHandler} />
-    );
-  } else if (guessRounds > 0) {
-    content = (
-      <GameOverScreen
-        roundsNumber={guessRounds}
-        userNumber={userNumber}
-        onRestart={configureNewGameHandler}
-      />
-    );
-  }
-
-  return (
+    </View>
+  ) : (
     <View style={styles.screen}>
-      <Header title={"Guess a Number"} />
-      {content}
+      <Header title={startGame ? `STAGE ${stage}` : "Guess a Number"} />
+      <View style={styles.body}>
+        {startGame ? (
+          gameOver ? (
+            <GameOverScreen onGoHome={goHomeHandler} />
+          ) : (
+            <GameScreen onGameOver={gameOverHandler} onGoHome={goHomeHandler} />
+          )
+        ) : (
+          <StartGameScreen onStartGame={startGameHandler} />
+        )}
+      </View>
+      <View style={styles.ads}>
+        <Text>This is Ads Area</Text>
+      </View>
     </View>
   );
 }
@@ -70,5 +80,14 @@ export default function App() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+  },
+  body: {
+    flex: 11,
+  },
+  ads: {
+    flex: 1.2,
+    backgroundColor: "lightpink",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

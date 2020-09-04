@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { vh, vmax } from "react-native-expo-viewport-units";
 
 import TitleText from "./TitleText";
 import colors from "../constants/colors";
@@ -7,19 +8,23 @@ import colors from "../constants/colors";
 const Header = (props) => {
   return (
     <View style={styles.header}>
-      <TitleText>{props.title}</TitleText>
+      <TitleText style={styles.headerTitle}>{props.title}</TitleText>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
+    flex: 1,
     width: "100%",
-    height: 90,
-    paddingTop: 36,
-    backgroundColor: colors.primary,
+    paddingTop: vh(3),
+    backgroundColor: colors.primaryColor,
     justifyContent: "center",
     alignItems: "center",
+  },
+  headerTitle: {
+    color: colors.whiteColor,
+    fontSize: vmax(3),
   },
 });
 

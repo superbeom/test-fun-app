@@ -1,15 +1,22 @@
 import React from "react";
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
+import { vh } from "react-native-expo-viewport-units";
 
+import Card from "../components/Card";
 import TitleText from "../components/TitleText";
 import BodyText from "../components/BodyText";
 import MainButton from "../components/MainButton";
+import StageButton from "../components/StageButton";
 import colors from "../constants/colors";
 
-const GameOverScreen = (props) => {
+const GameOverScreen = ({ onGoHome }) => {
   return (
     <View style={styles.screen}>
-      <TitleText>The Game is Over!</TitleText>
+      <View style={styles.score}>
+        <Card style={styles.card}>
+          <TitleText>STAGE SCORE: </TitleText>
+        </Card>
+      </View>
       <View style={styles.imageContainer}>
         <Image
           source={require("../assets/success.png")}
@@ -17,16 +24,13 @@ const GameOverScreen = (props) => {
           resizeMode={"cover"}
         />
       </View>
-      <View style={styles.resultContainer}>
-        <BodyText style={styles.resultText}>
-          Your phone needed{" "}
-          <Text style={styles.highlight}>{props.roundsNumber}</Text> rounds
-          {"\n"}to guess the number{" "}
-          <Text style={styles.highlight}>{props.userNumber}</Text>
-        </BodyText>
+      <View style={styles.buttonContainer}>
+        <StageButton onPress={() => null}>PLAY{"\n"}AGAIN</StageButton>
+        <StageButton onPress={() => null}>NEXT{"\n"}STAGE</StageButton>
       </View>
-
-      <MainButton onPress={props.onRestart}>NEW GAME</MainButton>
+      <View style={styles.goHomeContainer}>
+        <MainButton onPress={onGoHome}>GO HOME</MainButton>
+      </View>
     </View>
   );
 };
@@ -34,33 +38,42 @@ const GameOverScreen = (props) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    padding: 10,
     justifyContent: "center",
     alignItems: "center",
   },
+  score: {
+    width: "80%",
+    marginVertical: vh(5),
+  },
+  card: {
+    width: "100%",
+  },
   imageContainer: {
-    width: 300,
-    height: 300,
-    borderRadius: 150,
+    width: vh(30),
+    height: vh(30),
+    borderRadius: vh(30) / 2,
     borderWidth: 3,
     borderColor: "black",
     overflow: "hidden",
-    marginVertical: 30,
+    marginVertical: vh(5),
   },
   image: {
     width: "100%",
     height: "100%",
   },
-  resultContainer: {
+  buttonContainer: {
+    flex: 1,
+    width: "100%",
+    flexDirection: "row",
     marginHorizontal: 30,
-    marginVertical: 15,
+    marginVertical: vh(2),
+    justifyContent: "space-around",
+    alignItems: "center",
   },
-  resultText: {
-    textAlign: "center",
-    fontSize: 20,
-  },
-  highlight: {
-    color: colors.primary,
-    fontFamily: "open-sans-bold",
+  goHomeContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
   },
 });
 

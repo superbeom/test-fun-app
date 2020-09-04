@@ -1,11 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
-import { StyleSheet, View, Text, Alert, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Alert,
+  FlatList,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import NumberContainer from "../components/NumberContainer";
 import MainButton from "../components/MainButton";
 import BodyText from "../components/BodyText";
 import Card from "../components/Card";
+import Input from "../components/Input";
+import colors from "../constants/colors";
 
 const generateRandomBetween = (min, max, exclude) => {
   min = Math.ceil(min);
@@ -25,27 +35,45 @@ const renderListItem = (value, numOfRound) => (
   </View>
 );
 
-const GameScreen = ({ userChoice, onGameOver }) => {
+const GameScreen = ({ userChoice, onGameOver, onGoHome }) => {
   const iniitalGuess = generateRandomBetween(1, 100, userChoice);
   const [currentGuess, setCurrentGuess] = useState(iniitalGuess);
   const [pastGuesses, setPastGuesses] = useState([iniitalGuess]);
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
 
-  useEffect(() => {
-    if (currentGuess === userChoice) {
-      onGameOver(pastGuesses.length);
-    }
-  }, [currentGuess, userChoice, onGameOver]);
+  const [enteredValue, setEnteredValue] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  const [selectedNumber, setSelectedNumber] = useState();
+
+  const checkGoHome = () => {
+    Alert.alert(
+      "Seriously go home?",
+      "",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Go home", onPress: onGoHome },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const numberInputHandler = (inputText) => {
+    /* [0-9]: 0~9 // ^: not // [^0-9]: not 0~9 -> 0~9가 아니면, ""로 대체해라 */
+    setEnteredValue(inputText.replace(/[^0-9]/g, ""));
+  };
 
   const nextGuessHandler = (direction) => {
     if (
       (direction === "lower" && currentGuess < userChoice) ||
       (direction === "greater" && currentGuess > userChoice)
     ) {
-      Alert.alert("Don't lie!", "You know that this is wrong...", [
-        { text: "Sorry!", style: "cancel" },
-      ]);
+      Alert.alert(
+        "Don't lie!",
+        "You know that this is wrong...",
+        [{ text: "Sorry!", style: "cancel" }],
+        { cancelable: true }
+      );
       return;
     }
     if (direction === "lower") {
@@ -64,31 +92,61 @@ const GameScreen = ({ userChoice, onGameOver }) => {
     setPastGuesses((curPastGuesses) => [nextNumber, ...curPastGuesses]);
   };
 
+  useEffect(() => {
+    if (currentGuess === userChoice) {
+      onGameOver(pastGuesses.length);
+    }
+  }, [currentGuess, userChoice, onGameOver]);
+
   return (
-    <View style={styles.screen}>
-      <Text>Opponent's Guess</Text>
-      <NumberContainer>{currentGuess}</NumberContainer>
-      <Card style={styles.buttonContainer}>
-        <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
-          <Ionicons name="md-remove" size={24} color="white" />
-        </MainButton>
-        <MainButton onPress={nextGuessHandler.bind(this, "greater")}>
-          <Ionicons name="md-add" size={24} color="white" />
-        </MainButton>
-      </Card>
-      {/* ScrollView를 View로 감싸서 flex: 1 설정해 줘야,
-          스크롤이 제대로 나타남 */}
-      <View style={styles.listContainer}>
-        <FlatList
-          data={pastGuesses}
-          renderItem={({ item, index }) =>
-            renderListItem(item, pastGuesses.length - index)
-          }
-          keyExtractor={(item) => item.toString()}
-          contentContainerStyle={styles.list}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.screen}>
+        <Text>Opponent's Guess</Text>
+        <Input
+          style={styles.input}
+          maxLength={2}
+          autoCapitalize={"none"}
+          autoCorrect={false}
+          keyboardType={"number-pad"}
+          onChangeText={numberInputHandler}
+          value={enteredValue}
         />
+        <NumberContainer>{currentGuess}</NumberContainer>
+        <NumberContainer>{currentGuess}</NumberContainer>
+        <Card style={styles.buttonContainer}>
+          <MainButton
+            onPress={nextGuessHandler.bind(this, "lower")}
+            color={colors.primaryColor}
+          >
+            <Ionicons name="md-remove" size={24} color="white" />
+          </MainButton>
+          <MainButton
+            onPress={nextGuessHandler.bind(this, "greater")}
+            color={colors.primaryColor}
+          >
+            <Ionicons name="md-add" size={24} color="white" />
+          </MainButton>
+        </Card>
+        {/* ScrollView를 View로 감싸서 flex: 1 설정해 줘야,
+          스크롤이 제대로 나타남 */}
+        <Card style={styles.listContainer}>
+          <View style={styles.listTitle}>
+            <BodyText>Your picks</BodyText>
+          </View>
+          <FlatList
+            data={pastGuesses}
+            renderItem={({ item, index }) =>
+              renderListItem(item, pastGuesses.length - index)
+            }
+            keyExtractor={(item) => item.toString()}
+            contentContainerStyle={styles.list}
+            showsVerticalScrollIndicator={false}
+          />
+        </Card>
+        <MainButton onPress={onGameOver.bind(this, 1)}>DONE</MainButton>
+        <MainButton onPress={checkGoHome}>GO HOME</MainButton>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -97,6 +155,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     alignItems: "center",
+  },
+  input: {
+    width: 50,
+    textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -111,15 +173,18 @@ const styles = StyleSheet.create({
   },
   list: {
     flexGrow: 1,
-    justifyContent: "flex-end",
+  },
+  listTitle: {
+    marginBottom: 10,
+    alignItems: "center",
   },
   listItem: {
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: colors.lightGrayColor,
     padding: 15,
     marginVertical: 10,
-    backgroundColor: "white",
+    backgroundColor: colors.whiteColor,
     justifyContent: "space-around",
   },
 });
