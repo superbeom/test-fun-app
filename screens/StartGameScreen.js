@@ -12,6 +12,12 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import Card from "../components/Card";
 import StartButton from "../components/StartButton";
 import MainButton from "../components/MainButton";
+import {
+  YOUR_SCORE,
+  CURRENT_STAGE,
+  GAME_START,
+  RESET_GAME,
+} from "../constants/strings";
 
 const StartGameScreen = ({ onStartGame }) => {
   const [enteredValue, setEnteredValue] = useState("");
@@ -40,40 +46,24 @@ const StartGameScreen = ({ onStartGame }) => {
     setConfirmed(false);
   };
 
-  const confirmInputHandler = () => {
-    const chosenNumber = parseInt(enteredValue);
-    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
-      Alert.alert(
-        "Invalid number!",
-        "Number has to be a number\nbetween 1 and 99.",
-        [{ text: "Okay", style: "destructive", onPress: resetInputHandler }]
-      );
-      return;
-    }
-    setConfirmed(true);
-    setSelectedNumber(chosenNumber);
-    setEnteredValue("");
-    Keyboard.dismiss();
-  };
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.screen}>
         <View style={styles.scoreContainer}>
           <Card style={styles.card}>
             <View>
-              <Text style={styles.cardText}>YOUR SCORE: </Text>
+              <Text style={styles.cardText}>{YOUR_SCORE}</Text>
             </View>
             <View>
-              <Text style={styles.cardText}>CURRENT STAGE: </Text>
+              <Text style={styles.cardText}>{CURRENT_STAGE}</Text>
             </View>
           </Card>
         </View>
         <View style={styles.gameStartContainer}>
-          <StartButton onPress={onStartGame}>GAME{"\n"}START</StartButton>
+          <StartButton onPress={onStartGame}>{GAME_START}</StartButton>
         </View>
         <View style={styles.resetGameContainer}>
-          <MainButton onPress={checkResetGame}>RESET GAME</MainButton>
+          <MainButton onPress={checkResetGame}>{RESET_GAME}</MainButton>
         </View>
       </View>
     </TouchableWithoutFeedback>

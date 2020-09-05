@@ -9,10 +9,11 @@ const Input = (props) => {
 
 const styles = StyleSheet.create({
   input: {
-    height: 30,
-    borderBottomColor: colors.grayColor,
-    borderBottomWidth: 1,
-    marginVertical: 10,
+    textAlign: "center",
+    fontFamily: "open-sans-bold",
+    color: colors.primaryColor,
+    borderWidth: 1,
+    borderColor: colors.primaryColor,
   },
 });
 

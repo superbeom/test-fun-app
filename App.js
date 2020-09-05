@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, StatusBar } from "react-native";
 import * as Font from "expo-font";
 
 import Header from "./components/Header";
@@ -13,6 +13,10 @@ export default function App() {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [stage, setStage] = useState(1);
+
+  const playAgainHandler = () => {
+    setGameOver(false);
+  };
 
   const startGameHandler = () => {
     setStartGame(true);
@@ -51,6 +55,7 @@ export default function App() {
         alignItems: "center",
       }}
     >
+      <StatusBar hidden={true} />
       <Image
         style={{ width: 115, height: 115 }}
         source={require("./assets/icon.png")}
@@ -58,13 +63,21 @@ export default function App() {
     </View>
   ) : (
     <View style={styles.screen}>
+      <StatusBar hidden={true} />
       <Header title={startGame ? `STAGE ${stage}` : "Guess a Number"} />
       <View style={styles.body}>
         {startGame ? (
           gameOver ? (
-            <GameOverScreen onGoHome={goHomeHandler} />
+            <GameOverScreen
+              onPlayAgain={playAgainHandler}
+              onGoHome={goHomeHandler}
+            />
           ) : (
-            <GameScreen onGameOver={gameOverHandler} onGoHome={goHomeHandler} />
+            <GameScreen
+              onGameOver={gameOverHandler}
+              onGoHome={goHomeHandler}
+              stage={stage}
+            />
           )
         ) : (
           <StartGameScreen onStartGame={startGameHandler} />

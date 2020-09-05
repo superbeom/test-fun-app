@@ -8,13 +8,19 @@ import BodyText from "../components/BodyText";
 import MainButton from "../components/MainButton";
 import StageButton from "../components/StageButton";
 import colors from "../constants/colors";
+import {
+  STAGE_SCORE,
+  PLAY_AGAIN,
+  NEXT_STAGE,
+  GO_HOME,
+} from "../constants/strings";
 
-const GameOverScreen = ({ onGoHome }) => {
+const GameOverScreen = ({ onPlayAgain, onGoHome }) => {
   return (
     <View style={styles.screen}>
       <View style={styles.score}>
         <Card style={styles.card}>
-          <TitleText>STAGE SCORE: </TitleText>
+          <TitleText>{STAGE_SCORE}</TitleText>
         </Card>
       </View>
       <View style={styles.imageContainer}>
@@ -25,11 +31,11 @@ const GameOverScreen = ({ onGoHome }) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <StageButton onPress={() => null}>PLAY{"\n"}AGAIN</StageButton>
-        <StageButton onPress={() => null}>NEXT{"\n"}STAGE</StageButton>
+        <StageButton onPress={onPlayAgain}>{PLAY_AGAIN}</StageButton>
+        <StageButton onPress={() => null}>{NEXT_STAGE}</StageButton>
       </View>
       <View style={styles.goHomeContainer}>
-        <MainButton onPress={onGoHome}>GO HOME</MainButton>
+        <MainButton onPress={onGoHome}>{GO_HOME}</MainButton>
       </View>
     </View>
   );
