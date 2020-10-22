@@ -10,4 +10,5 @@ export default function (stage) {
   else if (stage === 9) return { min: 1, max: 701 };
   else if (stage === 10) return { min: 1, max: 801 };
   else if (stage === 11) return { min: 1, max: 901 };
+  else if (stage === 12) return { min: 1, max: 1001 };
 }

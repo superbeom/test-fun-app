@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, View, Image, BackHandler, Alert } from "react-native";
 import { vh } from "react-native-expo-viewport-units";
 
 import Card from "../components/Card";
@@ -15,12 +15,34 @@ import {
   GO_HOME,
 } from "../constants/strings";
 
-const GameOverScreen = ({ onPlayAgain, onGoHome }) => {
+const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Hold on!", "Are you sure you want to go home?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        { text: "YES", onPress: onGoHome },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <View style={styles.screen}>
       <View style={styles.score}>
         <Card style={styles.card}>
           <TitleText>{STAGE_SCORE}</TitleText>
+          <TitleText>{score}</TitleText>
         </Card>
       </View>
       <View style={styles.imageContainer}>
@@ -54,6 +76,8 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
   },
   imageContainer: {
     width: vh(30),

@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
-  Text,
-  Alert,
   FlatList,
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  Animated,
+  BackHandler,
+  Alert,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
@@ -21,7 +22,7 @@ import colors from "../constants/colors";
 import { YOUR_PICKS, GO_HOME } from "../constants/strings";
 import checkStage from "../utils/checkStage";
 
-const size = vw(25);
+const SIZE = vw(25);
 
 const generateRandomNumber = (min, max) => {
   min = Math.ceil(min);
@@ -31,24 +32,46 @@ const generateRandomNumber = (min, max) => {
   return rndNum;
 };
 
-const renderListItem = (value, numOfRound) => (
-  <View style={styles.listItem}>
-    <BodyText>#{numOfRound}</BodyText>
-    <BodyText>{value}</BodyText>
-  </View>
-);
+const renderListItem = (value, numOfRound) => {
+  return (
+    <View style={styles.listItem}>
+      <BodyText>#{numOfRound}</BodyText>
+      <BodyText>{value}</BodyText>
+    </View>
+  );
+};
 
-const GameScreen = ({ onGameOver, onGoHome, stage }) => {
+const GameScreen = ({ onGameOver, onGoHome, stage, setRound }) => {
+  const [start, setStart] = useState(false);
   const [randomNumber, setRandomNumber] = useState(null);
-  const [currentGuess, setCurrentGuess] = useState(null);
   const [pastGuesses, setPastGuesses] = useState([]);
-  const currentLow = useRef(1);
-  const currentHigh = useRef(100);
 
   const [enteredValue, setEnteredValue] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState();
-  const [hint, setHint] = useState(null);
+
+  const animation = useRef(new Animated.Value(0)).current;
+
+  const zeroToOne = () => {
+    return Animated.timing(animation, {
+      toValue: 1,
+      duration: 500,
+      delay: 300,
+      useNativeDriver: false,
+    });
+  };
+
+  const oneToZero = () => {
+    return Animated.timing(animation, {
+      toValue: 0,
+      duration: 500,
+      delay: 300,
+      useNativeDriver: false,
+    });
+  };
+
+  const executeAnimation = () => {
+    Animated.loop(Animated.sequence([zeroToOne(), oneToZero()])).start();
+  };
 
   const checkGoHome = () => {
     Alert.alert(
@@ -69,40 +92,62 @@ const GameScreen = ({ onGameOver, onGoHome, stage }) => {
 
   const confirmInputHandler = () => {
     const chosenNumber = parseInt(enteredValue);
-    setCurrentGuess(chosenNumber);
     console.log("randomNumber: ", randomNumber);
+
     if (randomNumber === chosenNumber) {
       onGameOver();
     }
+
     if (isNaN(chosenNumber)) {
       Alert.alert("Invalid number!", "", [
         { text: "Okay", style: "destructive", onPress: () => null },
       ]);
       return;
     }
+
+    setRound((curRound) => curRound + 1);
+    executeAnimation();
+    nextGuessHandler(chosenNumber);
     setSelectedNumber(chosenNumber);
+    setEnteredValue("");
+    setStart(true);
   };
 
-  const nextGuessHandler = (direction) => {
-    if (direction === "lower") {
-      currentHigh.current = currentGuess;
-    } else {
-      /* Low boundary is included in a future random number
-        To fix this, add 1 */
-      currentLow.current = currentGuess + 1;
-    }
-    const nextNumber = generateRandomNumber(
-      currentLow.current,
-      currentHigh.current,
-      currentGuess
-    );
-    setCurrentGuess(nextNumber);
-    setPastGuesses((curPastGuesses) => [nextNumber, ...curPastGuesses]);
+  const nextGuessHandler = (chosenNumber) => {
+    setPastGuesses((curPastGuesses) => [chosenNumber, ...curPastGuesses]);
   };
 
   useEffect(() => {
     const { min, max } = checkStage(stage);
     setRandomNumber(generateRandomNumber(min, max));
+
+    Alert.alert(
+      "Guess my number :)",
+      `${min} ~ ${max}`,
+      [{ text: "Got it", onPress: null }],
+      {
+        cancelable: true,
+      }
+    );
+
+    const backAction = () => {
+      Alert.alert("Hold on!", "Are you sure you want to go back?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        { text: "YES", onPress: onGoHome },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   return (
@@ -116,14 +161,15 @@ const GameScreen = ({ onGameOver, onGoHome, stage }) => {
         <View style={styles.header}>
           <Input
             style={styles.input}
-            // maxLength={2}
+            maxLength={stage < 12 ? 3 : null}
             autoCapitalize={"none"}
             autoCorrect={false}
             keyboardType={"number-pad"}
             onChangeText={numberInputHandler}
             value={enteredValue}
             placeholder={"Input here!"}
-            onSubmitEditing={confirmInputHandler}
+            onSubmitEditing={confirmInputHandler.bind(this)}
+            autoFocus={true}
           />
           <DoneButton style={styles.button} onPress={confirmInputHandler}>
             <FontAwesome name="send" size={vw(6)} color={colors.whiteColor} />
@@ -134,19 +180,23 @@ const GameScreen = ({ onGameOver, onGoHome, stage }) => {
         <View style={styles.body}>
           <View style={styles.hintContainer}>
             <View style={styles.hintBall}>
-              {randomNumber > selectedNumber ? (
-                <Entypo
-                  name="arrow-bold-up"
-                  size={vh(6)}
-                  color={colors.whiteColor}
-                />
-              ) : (
-                <Entypo
-                  name="arrow-bold-down"
-                  size={vh(6)}
-                  color={colors.whiteColor}
-                />
-              )}
+              <Animated.View style={{ opacity: animation }}>
+                {start ? (
+                  randomNumber > selectedNumber ? (
+                    <Entypo
+                      name="arrow-bold-up"
+                      size={vh(6)}
+                      color={colors.whiteColor}
+                    />
+                  ) : (
+                    <Entypo
+                      name="arrow-bold-down"
+                      size={vh(6)}
+                      color={colors.whiteColor}
+                    />
+                  )
+                ) : null}
+              </Animated.View>
             </View>
             <View />
           </View>
@@ -154,15 +204,17 @@ const GameScreen = ({ onGameOver, onGoHome, stage }) => {
             <View style={styles.listTitle}>
               <BodyText>{YOUR_PICKS}</BodyText>
             </View>
-            <FlatList
-              data={pastGuesses}
-              renderItem={({ item, index }) =>
-                renderListItem(item, pastGuesses.length - index)
-              }
-              keyExtractor={(item) => item.toString()}
-              contentContainerStyle={styles.list}
-              showsVerticalScrollIndicator={false}
-            />
+            {pastGuesses ? (
+              <FlatList
+                data={pastGuesses}
+                renderItem={({ item, index }) =>
+                  renderListItem(item, pastGuesses.length - index)
+                }
+                keyExtractor={() => (Math.random() + Math.random()).toString()}
+                contentContainerStyle={styles.list}
+                showsVerticalScrollIndicator={false}
+              />
+            ) : null}
           </Card>
         </View>
 
@@ -209,9 +261,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   hintBall: {
-    width: size,
-    height: size,
-    borderRadius: size / 2,
+    width: SIZE,
+    height: SIZE,
+    borderRadius: SIZE / 2,
     backgroundColor: colors.primaryColor,
     shadowColor: colors.blackColor,
     shadowOffset: { width: 0, height: 2 },
@@ -239,7 +291,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 10,
     backgroundColor: colors.whiteColor,
-    justifyContent: "space-around",
+    justifyContent: "space-between",
   },
   footer: {
     flex: 1,

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Image, StatusBar } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  StatusBar,
+  BackHandler,
+  Alert,
+} from "react-native";
 import * as Font from "expo-font";
 
 import Header from "./components/Header";
@@ -11,10 +19,13 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [startGame, setStartGame] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
   const [stage, setStage] = useState(1);
+  const [score, setScore] = useState(0);
+  const [round, setRound] = useState(1);
 
   const playAgainHandler = () => {
+    setScore(0);
+    setRound(1);
     setGameOver(false);
   };
 
@@ -23,10 +34,17 @@ export default function App() {
   };
 
   const gameOverHandler = () => {
+    if (stage < 12 && round < 7) {
+      setScore(100);
+    } else {
+      setScore(50);
+    }
     setGameOver(true);
   };
 
   const goHomeHandler = () => {
+    setScore(0);
+    setRound(1);
     setStartGame(false);
     setGameOver(false);
   };
@@ -45,6 +63,25 @@ export default function App() {
 
   useEffect(() => {
     preLoad();
+
+    const backAction = () => {
+      Alert.alert("Hold on!", "Are you sure you want to exit?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        { text: "YES", onPress: BackHandler.exitApp() },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   return loading ? (
@@ -71,12 +108,14 @@ export default function App() {
             <GameOverScreen
               onPlayAgain={playAgainHandler}
               onGoHome={goHomeHandler}
+              score={score}
             />
           ) : (
             <GameScreen
               onGameOver={gameOverHandler}
               onGoHome={goHomeHandler}
               stage={stage}
+              setRound={setRound}
             />
           )
         ) : (
