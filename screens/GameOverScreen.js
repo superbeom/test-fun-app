@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { StyleSheet, View, Image, BackHandler, Alert } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import { vh } from "react-native-expo-viewport-units";
+
+import { GameContext } from "../context/GameContext";
 
 import Card from "../components/Card";
 import TitleText from "../components/TitleText";
@@ -16,20 +18,16 @@ import {
   GO_HOME,
 } from "../constants/strings";
 
-const GameOverScreen = ({
-  onPlayAgain,
-  onGoHome,
-  stage,
-  setStage,
-  totalScore,
-  setTotalScore,
-  score,
-}) => {
+const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
+  const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
+
   const successStage = async () => {
     await AsyncStorage.setItem("STAGE", String(stage + 1));
     await AsyncStorage.setItem("TOTAL_SCORE", String(totalScore + score));
-    setStage((curStage) => curStage + 1);
-    setTotalScore((curTotalScore) => curTotalScore + score);
+    setGameInfo((curState) => ({
+      stage: curState.stage + 1,
+      totalScore: curState.totalScore + score,
+    }));
     onGoHome();
   };
 

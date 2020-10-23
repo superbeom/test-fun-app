@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -9,7 +9,8 @@ import {
   Alert,
 } from "react-native";
 import * as Font from "expo-font";
-import AsyncStorage from "@react-native-community/async-storage";
+
+import { GameProvider } from "./context/GameContext";
 
 import Header from "./components/Header";
 import StartGameScreen from "./screens/StartGameScreen";
@@ -21,7 +22,7 @@ export default function App() {
   const [startGame, setStartGame] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [stage, setStage] = useState(1);
-  const [totalScore, setTotalScore] = useState(null);
+  const [totalScore, setTotalScore] = useState(0);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(1);
 
@@ -57,10 +58,6 @@ export default function App() {
         "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
         "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
       });
-      const storageScore = await AsyncStorage.getItem("TOTAL_SCORE");
-      console.log("preLoad, storageScore: ", storageScore);
-      console.log("preLoad, storageScore: ", typeof storageScore);
-      setTotalScore(parseInt(storageScore));
       setLoading(false);
     } catch (error) {
       console.log("error: ", error);
@@ -68,7 +65,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log("App, useEffect");
     preLoad();
 
     const backAction = () => {
@@ -106,37 +102,39 @@ export default function App() {
       />
     </View>
   ) : (
-    <View style={styles.screen}>
-      <StatusBar hidden={true} />
-      <Header title={startGame ? `STAGE ${stage}` : "Guess a Number"} />
-      <View style={styles.body}>
-        {startGame ? (
-          gameOver ? (
-            <GameOverScreen
-              onPlayAgain={playAgainHandler}
-              onGoHome={goHomeHandler}
-              stage={stage}
-              setStage={setStage}
-              totalScore={totalScore}
-              setTotalScore={setTotalScore}
-              score={score}
-            />
+    <GameProvider>
+      <View style={styles.screen}>
+        <StatusBar hidden={true} />
+        <Header title={startGame ? `STAGE ${stage}` : "Guess a Number"} />
+        <View style={styles.body}>
+          {startGame ? (
+            gameOver ? (
+              <GameOverScreen
+                onPlayAgain={playAgainHandler}
+                onGoHome={goHomeHandler}
+                stage={stage}
+                setStage={setStage}
+                totalScore={totalScore}
+                setTotalScore={setTotalScore}
+                score={score}
+              />
+            ) : (
+              <GameScreen
+                onGameOver={gameOverHandler}
+                onGoHome={goHomeHandler}
+                stage={stage}
+                setRound={setRound}
+              />
+            )
           ) : (
-            <GameScreen
-              onGameOver={gameOverHandler}
-              onGoHome={goHomeHandler}
-              stage={stage}
-              setRound={setRound}
-            />
-          )
-        ) : (
-          <StartGameScreen onStartGame={startGameHandler} />
-        )}
+            <StartGameScreen onStartGame={startGameHandler} />
+          )}
+        </View>
+        <View style={styles.ads}>
+          <Text>This is Ads Area</Text>
+        </View>
       </View>
-      <View style={styles.ads}>
-        <Text>This is Ads Area</Text>
-      </View>
-    </View>
+    </GameProvider>
   );
 }
 

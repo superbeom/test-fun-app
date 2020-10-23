@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -8,6 +8,8 @@ import {
   Alert,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
+
+import { GameContext } from "../context/GameContext";
 
 import Card from "../components/Card";
 import StartButton from "../components/StartButton";
@@ -20,13 +22,24 @@ import {
 } from "../constants/strings";
 
 const StartGameScreen = ({ onStartGame }) => {
+  const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
+
+  const resetGame = () => {
+    /* Local reset */
+    setGameInfo({
+      stage: 1,
+      totalScore: 0,
+    });
+    /* AsyncStorage reset */
+  };
+
   const checkResetGame = () => {
     Alert.alert(
       "Seriously reset game?",
       "",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Reset game", onPress: () => null },
+        { text: "Reset game", onPress: resetGame },
       ],
       { cancelable: true }
     );
@@ -37,11 +50,13 @@ const StartGameScreen = ({ onStartGame }) => {
       <View style={styles.screen}>
         <View style={styles.scoreContainer}>
           <Card style={styles.card}>
-            <View>
-              <Text style={styles.cardText}>{YOUR_SCORE}</Text>
-            </View>
-            <View>
+            <View style={styles.cardBox}>
               <Text style={styles.cardText}>{CURRENT_STAGE}</Text>
+              <Text style={styles.cardText}>{stage}</Text>
+            </View>
+            <View style={styles.cardBox}>
+              <Text style={styles.cardText}>{YOUR_SCORE}</Text>
+              <Text style={styles.cardText}>{totalScore}</Text>
             </View>
           </Card>
         </View>
@@ -72,6 +87,10 @@ const styles = StyleSheet.create({
     maxWidth: "80%",
     height: vh(13),
     justifyContent: "space-around",
+  },
+  cardBox: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   cardText: {
     fontSize: vw(4.5),
