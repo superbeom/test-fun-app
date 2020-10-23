@@ -20,7 +20,7 @@ import Card from "../components/Card";
 import Input from "../components/Input";
 import colors from "../constants/colors";
 import { YOUR_PICKS, GO_HOME } from "../constants/strings";
-import checkStage from "../../utils/checkStage";
+import checkStage from "../utils/checkStage";
 
 const SIZE = vw(25);
 

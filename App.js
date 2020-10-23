@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import * as Font from "expo-font";
 
-import { GameProvider } from "./context/GameContext";
+import { GameProvider } from "./src/context/GameContext";
 
-import Header from "./components/Header";
-import StartGameScreen from "./screens/StartGameScreen";
-import GameScreen from "./screens/GameScreen";
-import GameOverScreen from "./screens/GameOverScreen";
+import Header from "./src/components/Header";
+import StartGameScreen from "./src/screens/StartGameScreen";
+import GameScreen from "./src/screens/GameScreen";
+import GameOverScreen from "./src/screens/GameOverScreen";
 
 export default function App() {
   const [loading, setLoading] = useState(true);

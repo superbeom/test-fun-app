@@ -1,4 +1,4 @@
-export default function (stage) {
+export default (stage) => {
   if (stage === 1) return { min: 1, max: 11 };
   else if (stage === 2) return { min: 1, max: 51 };
   else if (stage === 3) return { min: 1, max: 101 };
@@ -11,4 +11,4 @@ export default function (stage) {
   else if (stage === 10) return { min: 1, max: 801 };
   else if (stage === 11) return { min: 1, max: 901 };
   else if (stage === 12) return { min: 1, max: 1001 };
-}
+};
