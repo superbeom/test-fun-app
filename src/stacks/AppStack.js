@@ -35,6 +35,7 @@ export default AppStack = () => {
 
   const startGameHandler = () => {
     setStartGame(true);
+    playAgainHandler();
   };
 
   const gameOverHandler = () => {
@@ -131,6 +132,7 @@ export default AppStack = () => {
             <GameOverScreen
               onPlayAgain={playAgainHandler}
               onGoHome={goHomeHandler}
+              onStartGame={startGameHandler}
               score={score}
             />
           ) : (

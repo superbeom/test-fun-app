@@ -16,8 +16,18 @@ import {
   GO_HOME,
 } from "../constants/strings";
 
-const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
+const GameOverScreen = ({ onPlayAgain, onGoHome, onStartGame, score }) => {
   const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
+
+  const nextStage = async () => {
+    await AsyncStorage.setItem("STAGE", (stage + 1).toString());
+    await AsyncStorage.setItem("TOTAL_SCORE", (totalScore + score).toString());
+    setGameInfo((curState) => ({
+      stage: curState.stage + 1,
+      totalScore: curState.totalScore + score,
+    }));
+    onStartGame();
+  };
 
   const successStage = async () => {
     await AsyncStorage.setItem("STAGE", (stage + 1).toString());
@@ -80,7 +90,7 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
       <View style={styles.buttonContainer}>
         <StageButton onPress={replayStage}>{PLAY_AGAIN}</StageButton>
         {score > 0 ? (
-          <StageButton onPress={() => null}>{NEXT_STAGE}</StageButton>
+          <StageButton onPress={nextStage}>{NEXT_STAGE}</StageButton>
         ) : null}
       </View>
       <View style={styles.goHomeContainer}>
