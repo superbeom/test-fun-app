@@ -7,6 +7,7 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 import { vw, vh } from "react-native-expo-viewport-units";
 
 import { GameContext } from "../context/GameContext";
@@ -24,13 +25,14 @@ import {
 const StartGameScreen = ({ onStartGame }) => {
   const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
 
-  const resetGame = () => {
+  const resetGame = async () => {
     /* Local reset */
     setGameInfo({
       stage: 1,
       totalScore: 0,
     });
     /* AsyncStorage reset */
+    await AsyncStorage.clear();
   };
 
   const checkResetGame = () => {
