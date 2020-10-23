@@ -164,7 +164,17 @@ const GameScreen = ({ onGameOver, onGoHome, setRound }) => {
         <View style={styles.header}>
           <Input
             style={styles.input}
-            maxLength={stage < 12 ? 3 : stage > 11 && stage < 40 ? 4 : 5}
+            maxLength={
+              stage <= 11
+                ? 3
+                : stage > 11 && stage <= 39
+                ? 4
+                : stage > 39 && stage <= 82
+                ? 5
+                : stage > 82 && stage <= 105
+                ? 6
+                : 7
+            }
             autoCapitalize={"none"}
             autoCorrect={false}
             keyboardType={"number-pad"}

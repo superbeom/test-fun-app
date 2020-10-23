@@ -12,12 +12,12 @@ import * as Font from "expo-font";
 import AsyncStorage from "@react-native-community/async-storage";
 
 import { GameContext } from "../context/GameContext";
+import getScore from "../utils/getScore";
 
 import Header from "../components/Header";
 import StartGameScreen from "../screens/StartGameScreen";
 import GameScreen from "../screens/GameScreen";
 import GameOverScreen from "../screens/GameOverScreen";
-import getScore from "../utils/getScore";
 
 export default AppStack = () => {
   const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
@@ -39,18 +39,7 @@ export default AppStack = () => {
   };
 
   const gameOverHandler = () => {
-    let resultScore;
-    if (stage <= 8) {
-      resultScore = getScore("first", round);
-    } else if (stage > 8 && stage <= 16) {
-      resultScore = getScore("second", round);
-    } else if (stage > 16 && stage <= 24) {
-      resultScore = getScore("third", round);
-    } else if (stage > 24 && stage <= 32) {
-      resultScore = getScore("fourth", round);
-    } else if (stage > 32 && stage <= 40) {
-      resultScore = getScore("fifth", round);
-    }
+    const resultScore = getScore(stage, round);
 
     setScore(resultScore);
     setGameOver(true);
