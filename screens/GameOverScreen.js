@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { StyleSheet, View, Image, BackHandler, Alert } from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 import { vh } from "react-native-expo-viewport-units";
 
 import Card from "../components/Card";
@@ -15,7 +16,27 @@ import {
   GO_HOME,
 } from "../constants/strings";
 
-const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
+const GameOverScreen = ({
+  onPlayAgain,
+  onGoHome,
+  stage,
+  setStage,
+  totalScore,
+  setTotalScore,
+  score,
+}) => {
+  const successStage = async () => {
+    await AsyncStorage.setItem("STAGE", String(stage + 1));
+    await AsyncStorage.setItem("TOTAL_SCORE", String(totalScore + score));
+    setStage((curStage) => curStage + 1);
+    setTotalScore((curTotalScore) => curTotalScore + score);
+    onGoHome();
+  };
+
+  const replayStage = () => {
+    onPlayAgain();
+  };
+
   useEffect(() => {
     const backAction = () => {
       Alert.alert("Hold on!", "Are you sure you want to go home?", [
@@ -24,7 +45,7 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
           onPress: () => null,
           style: "cancel",
         },
-        { text: "YES", onPress: onGoHome },
+        { text: "YES", onPress: successStage },
       ]);
       return true;
     };
@@ -53,11 +74,11 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <StageButton onPress={onPlayAgain}>{PLAY_AGAIN}</StageButton>
+        <StageButton onPress={replayStage}>{PLAY_AGAIN}</StageButton>
         <StageButton onPress={() => null}>{NEXT_STAGE}</StageButton>
       </View>
       <View style={styles.goHomeContainer}>
-        <MainButton onPress={onGoHome}>{GO_HOME}</MainButton>
+        <MainButton onPress={successStage}>{GO_HOME}</MainButton>
       </View>
     </View>
   );

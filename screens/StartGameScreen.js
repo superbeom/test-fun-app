@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -20,10 +20,6 @@ import {
 } from "../constants/strings";
 
 const StartGameScreen = ({ onStartGame }) => {
-  const [enteredValue, setEnteredValue] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
-  const [selectedNumber, setSelectedNumber] = useState();
-
   const checkResetGame = () => {
     Alert.alert(
       "Seriously reset game?",
@@ -34,16 +30,6 @@ const StartGameScreen = ({ onStartGame }) => {
       ],
       { cancelable: true }
     );
-  };
-
-  const numberInputHandler = (inputText) => {
-    /* [0-9]: 0~9 // ^: not // [^0-9]: not 0~9 -> 0~9가 아니면, ""로 대체해라 */
-    setEnteredValue(inputText.replace(/[^0-9]/g, ""));
-  };
-
-  const resetInputHandler = () => {
-    setEnteredValue("");
-    setConfirmed(false);
   };
 
   return (

@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import * as Font from "expo-font";
+import AsyncStorage from "@react-native-community/async-storage";
 
 import Header from "./components/Header";
 import StartGameScreen from "./screens/StartGameScreen";
@@ -20,6 +21,7 @@ export default function App() {
   const [startGame, setStartGame] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [stage, setStage] = useState(1);
+  const [totalScore, setTotalScore] = useState(null);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(1);
 
@@ -55,6 +57,10 @@ export default function App() {
         "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
         "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
       });
+      const storageScore = await AsyncStorage.getItem("TOTAL_SCORE");
+      console.log("preLoad, storageScore: ", storageScore);
+      console.log("preLoad, storageScore: ", typeof storageScore);
+      setTotalScore(parseInt(storageScore));
       setLoading(false);
     } catch (error) {
       console.log("error: ", error);
@@ -62,6 +68,7 @@ export default function App() {
   };
 
   useEffect(() => {
+    console.log("App, useEffect");
     preLoad();
 
     const backAction = () => {
@@ -108,6 +115,10 @@ export default function App() {
             <GameOverScreen
               onPlayAgain={playAgainHandler}
               onGoHome={goHomeHandler}
+              stage={stage}
+              setStage={setStage}
+              totalScore={totalScore}
+              setTotalScore={setTotalScore}
               score={score}
             />
           ) : (
