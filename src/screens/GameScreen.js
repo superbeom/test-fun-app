@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
+
+import { GameContext } from "../context/GameContext";
 
 import MainButton from "../components/MainButton";
 import BodyText from "../components/BodyText";
@@ -41,7 +43,8 @@ const renderListItem = (value, numOfRound) => {
   );
 };
 
-const GameScreen = ({ onGameOver, onGoHome, stage, setRound }) => {
+const GameScreen = ({ onGameOver, onGoHome, setRound }) => {
+  const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
   const [start, setStart] = useState(false);
   const [randomNumber, setRandomNumber] = useState(null);
   const [pastGuesses, setPastGuesses] = useState([]);
@@ -161,7 +164,7 @@ const GameScreen = ({ onGameOver, onGoHome, stage, setRound }) => {
         <View style={styles.header}>
           <Input
             style={styles.input}
-            maxLength={stage < 12 ? 3 : null}
+            maxLength={stage < 12 ? 3 : stage > 11 && stage < 40 ? 4 : 5}
             autoCapitalize={"none"}
             autoCorrect={false}
             keyboardType={"number-pad"}

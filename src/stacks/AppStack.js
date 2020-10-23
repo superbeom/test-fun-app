@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -9,18 +9,21 @@ import {
   Alert,
 } from "react-native";
 import * as Font from "expo-font";
+import AsyncStorage from "@react-native-community/async-storage";
+
+import { GameContext } from "../context/GameContext";
 
 import Header from "../components/Header";
 import StartGameScreen from "../screens/StartGameScreen";
 import GameScreen from "../screens/GameScreen";
 import GameOverScreen from "../screens/GameOverScreen";
+import getScore from "../utils/getScore";
 
 export default AppStack = () => {
+  const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
   const [loading, setLoading] = useState(true);
   const [startGame, setStartGame] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [stage, setStage] = useState(1);
-  const [totalScore, setTotalScore] = useState(0);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(1);
 
@@ -35,11 +38,20 @@ export default AppStack = () => {
   };
 
   const gameOverHandler = () => {
-    if (stage < 12 && round < 7) {
-      setScore(100);
-    } else {
-      setScore(50);
+    let resultScore;
+    if (stage <= 8) {
+      resultScore = getScore("first", round);
+    } else if (stage > 8 && stage <= 16) {
+      resultScore = getScore("second", round);
+    } else if (stage > 16 && stage <= 24) {
+      resultScore = getScore("third", round);
+    } else if (stage > 24 && stage <= 32) {
+      resultScore = getScore("fourth", round);
+    } else if (stage > 32 && stage <= 40) {
+      resultScore = getScore("fifth", round);
     }
+
+    setScore(resultScore);
     setGameOver(true);
   };
 
@@ -56,6 +68,16 @@ export default AppStack = () => {
         "open-sans": require("../../assets/fonts/OpenSans-Regular.ttf"),
         "open-sans-bold": require("../../assets/fonts/OpenSans-Bold.ttf"),
       });
+
+      const storageStage = parseInt(await AsyncStorage.getItem("STAGE"));
+      const storageScore = parseInt(await AsyncStorage.getItem("TOTAL_SCORE"));
+      if (storageStage && storageScore) {
+        setGameInfo({
+          stage: storageStage,
+          totalScore: storageScore,
+        });
+      }
+
       setLoading(false);
     } catch (error) {
       console.log("error: ", error);
@@ -109,17 +131,12 @@ export default AppStack = () => {
             <GameOverScreen
               onPlayAgain={playAgainHandler}
               onGoHome={goHomeHandler}
-              stage={stage}
-              setStage={setStage}
-              totalScore={totalScore}
-              setTotalScore={setTotalScore}
               score={score}
             />
           ) : (
             <GameScreen
               onGameOver={gameOverHandler}
               onGoHome={goHomeHandler}
-              stage={stage}
               setRound={setRound}
             />
           )

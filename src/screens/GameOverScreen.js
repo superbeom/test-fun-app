@@ -7,10 +7,8 @@ import { GameContext } from "../context/GameContext";
 
 import Card from "../components/Card";
 import TitleText from "../components/TitleText";
-import BodyText from "../components/BodyText";
 import MainButton from "../components/MainButton";
 import StageButton from "../components/StageButton";
-import colors from "../constants/colors";
 import {
   STAGE_SCORE,
   PLAY_AGAIN,
@@ -22,12 +20,16 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
   const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
 
   const successStage = async () => {
-    await AsyncStorage.setItem("STAGE", String(stage + 1));
-    await AsyncStorage.setItem("TOTAL_SCORE", String(totalScore + score));
+    await AsyncStorage.setItem("STAGE", (stage + 1).toString());
+    await AsyncStorage.setItem("TOTAL_SCORE", (totalScore + score).toString());
     setGameInfo((curState) => ({
       stage: curState.stage + 1,
       totalScore: curState.totalScore + score,
     }));
+    onGoHome();
+  };
+
+  const failStage = () => {
     onGoHome();
   };
 
@@ -43,7 +45,7 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
           onPress: () => null,
           style: "cancel",
         },
-        { text: "YES", onPress: successStage },
+        { text: "YES", onPress: score > 0 ? successStage : null },
       ]);
       return true;
     };
@@ -66,17 +68,25 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, score }) => {
       </View>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../assets/success.png")}
+          source={
+            score > 0
+              ? require("../../assets/success.png")
+              : require("../../assets/fail.png")
+          }
           style={styles.image}
           resizeMode={"cover"}
         />
       </View>
       <View style={styles.buttonContainer}>
         <StageButton onPress={replayStage}>{PLAY_AGAIN}</StageButton>
-        <StageButton onPress={() => null}>{NEXT_STAGE}</StageButton>
+        {score > 0 ? (
+          <StageButton onPress={() => null}>{NEXT_STAGE}</StageButton>
+        ) : null}
       </View>
       <View style={styles.goHomeContainer}>
-        <MainButton onPress={successStage}>{GO_HOME}</MainButton>
+        <MainButton onPress={score > 0 ? successStage : failStage}>
+          {GO_HOME}
+        </MainButton>
       </View>
     </View>
   );
