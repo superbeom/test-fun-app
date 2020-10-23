@@ -95,7 +95,6 @@ const GameScreen = ({ onGameOver, onGoHome, setRound }) => {
 
   const confirmInputHandler = () => {
     const chosenNumber = parseInt(enteredValue);
-    console.log("randomNumber: ", randomNumber);
 
     if (randomNumber === chosenNumber) {
       onGameOver();
