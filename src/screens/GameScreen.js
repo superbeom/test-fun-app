@@ -86,6 +86,8 @@ const GameScreen = ({ onGameOver, onGoHome, setRound }) => {
       ],
       { cancelable: true }
     );
+
+    return true;
   };
 
   const numberInputHandler = (inputText) => {
@@ -132,24 +134,10 @@ const GameScreen = ({ onGameOver, onGoHome, setRound }) => {
       }
     );
 
-    const backAction = () => {
-      Alert.alert("Hold on!", "Are you sure you want to go back?", [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: "cancel",
-        },
-        { text: "YES", onPress: onGoHome },
-      ]);
-      return true;
-    };
+    BackHandler.addEventListener("hardwareBackPress", checkGoHome);
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", checkGoHome);
   }, []);
 
   return (

@@ -74,27 +74,26 @@ export default AppStack = () => {
     }
   };
 
+  const backAction = () => {
+    Alert.alert("Hold on!", "Are you sure you want to exit?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel",
+      },
+      { text: "YES", onPress: () => BackHandler.exitApp() },
+    ]);
+
+    return true;
+  };
+
   useEffect(() => {
     preLoad();
 
-    const backAction = () => {
-      Alert.alert("Hold on!", "Are you sure you want to exit?", [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: "cancel",
-        },
-        { text: "YES", onPress: BackHandler.exitApp() },
-      ]);
-      return true;
-    };
+    BackHandler.addEventListener("hardwareBackPress", backAction);
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
   }, []);
 
   return loading ? (
@@ -114,7 +113,7 @@ export default AppStack = () => {
   ) : (
     <View style={styles.screen}>
       <StatusBar hidden={true} />
-      <Header title={startGame ? `STAGE ${stage}` : "Guess a Number"} />
+      <Header title={startGame ? `STAGE ${stage}` : "Guess My Number"} />
       <View style={styles.body}>
         {startGame ? (
           gameOver ? (

@@ -37,6 +37,8 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, onStartGame, score }) => {
       totalScore: curState.totalScore + score,
     }));
     onGoHome();
+
+    // return true;
   };
 
   const failStage = () => {
@@ -47,25 +49,24 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, onStartGame, score }) => {
     onPlayAgain();
   };
 
+  const backAction = () => {
+    Alert.alert("Hold on!", "Are you sure you want to go home?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel",
+      },
+      { text: "YES", onPress: score > 0 ? successStage : null },
+    ]);
+
+    return true;
+  };
+
   useEffect(() => {
-    const backAction = () => {
-      Alert.alert("Hold on!", "Are you sure you want to go home?", [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: "cancel",
-        },
-        { text: "YES", onPress: score > 0 ? successStage : null },
-      ]);
-      return true;
-    };
+    BackHandler.addEventListener("hardwareBackPress", backAction);
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
   }, []);
 
   return (
