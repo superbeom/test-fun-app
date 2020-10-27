@@ -168,8 +168,9 @@ const GameScreen = ({ onGameOver, onGoHome, setRound }) => {
             onChangeText={numberInputHandler}
             value={enteredValue}
             placeholder={"Input here!"}
-            onSubmitEditing={confirmInputHandler.bind(this)}
+            onSubmitEditing={confirmInputHandler}
             autoFocus={true}
+            blurOnSubmit={false}
           />
           <DoneButton style={styles.button} onPress={confirmInputHandler}>
             <FontAwesome name="send" size={vw(6)} color={colors.whiteColor} />
