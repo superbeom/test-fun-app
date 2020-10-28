@@ -40,7 +40,7 @@ const StartGameScreen = ({ onStartGame }) => {
   const checkResetGame = () => {
     Alert.alert(
       "Seriously reset game?",
-      "",
+      "You are going to lose your stage and score",
       [
         { text: "Cancel", style: "cancel" },
         { text: "Reset game", onPress: resetGame },
