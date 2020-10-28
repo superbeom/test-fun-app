@@ -4,6 +4,7 @@ import {
   View,
   Text,
   TouchableWithoutFeedback,
+  Image,
   Keyboard,
   Alert,
 } from "react-native";
@@ -12,6 +13,7 @@ import { vw, vh } from "react-native-expo-viewport-units";
 
 import { GameContext } from "../context/GameContext";
 
+import colors from "../constants/colors";
 import Card from "../components/Card";
 import StartButton from "../components/StartButton";
 import MainButton from "../components/MainButton";
@@ -23,7 +25,7 @@ import {
 } from "../constants/strings";
 
 const StartGameScreen = ({ onStartGame }) => {
-  const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
+  const [{ stage, totalScore, gameEnd }, setGameInfo] = useContext(GameContext);
 
   const resetGame = async () => {
     /* Local reset */
@@ -52,9 +54,27 @@ const StartGameScreen = ({ onStartGame }) => {
       <View style={styles.screen}>
         <View style={styles.scoreContainer}>
           <Card style={styles.card}>
-            <View style={styles.cardBox}>
-              <Text style={styles.cardText}>{CURRENT_STAGE}</Text>
-              <Text style={styles.cardText}>{stage}</Text>
+            <View
+              style={[
+                styles.cardBox,
+                gameEnd ? { justifyContent: "center" } : null,
+              ]}
+            >
+              {gameEnd ? (
+                <Text
+                  style={[
+                    styles.cardText,
+                    { color: colors.primaryColor, fontWeight: "800" },
+                  ]}
+                >
+                  CONGRATULATIONS!!
+                </Text>
+              ) : (
+                <>
+                  <Text style={styles.cardText}>{CURRENT_STAGE}</Text>
+                  <Text style={styles.cardText}>{stage}</Text>
+                </>
+              )}
             </View>
             <View style={styles.cardBox}>
               <Text style={styles.cardText}>{YOUR_SCORE}</Text>
@@ -63,7 +83,17 @@ const StartGameScreen = ({ onStartGame }) => {
           </Card>
         </View>
         <View style={styles.gameStartContainer}>
-          <StartButton onPress={onStartGame}>{GAME_START}</StartButton>
+          {gameEnd ? (
+            <View style={styles.imageContainer}>
+              <Image
+                source={require("../../assets/congratulation.png")}
+                style={styles.image}
+                resizeMode={"cover"}
+              />
+            </View>
+          ) : (
+            <StartButton onPress={onStartGame}>{GAME_START}</StartButton>
+          )}
         </View>
         <View style={styles.resetGameContainer}>
           <MainButton onPress={checkResetGame}>{RESET_GAME}</MainButton>
@@ -105,6 +135,19 @@ const styles = StyleSheet.create({
   resetGameContainer: {
     flex: 1,
     justifyContent: "flex-end",
+  },
+  imageContainer: {
+    width: vh(30),
+    height: vh(30),
+    borderRadius: vh(30) / 2,
+    borderWidth: 3,
+    borderColor: "black",
+    overflow: "hidden",
+    marginVertical: vh(5),
+  },
+  image: {
+    width: "100%",
+    height: "100%",
   },
 });
 

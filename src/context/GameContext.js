@@ -6,6 +6,7 @@ const GameProvider = (props) => {
   const [state, setState] = useState({
     stage: 1,
     totalScore: 0,
+    gameEnd: false,
   });
 
   return (

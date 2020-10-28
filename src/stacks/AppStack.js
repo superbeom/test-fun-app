@@ -20,7 +20,7 @@ import GameScreen from "../screens/GameScreen";
 import GameOverScreen from "../screens/GameOverScreen";
 
 export default AppStack = () => {
-  const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
+  const [{ stage }, setGameInfo] = useContext(GameContext);
   const [loading, setLoading] = useState(true);
   const [startGame, setStartGame] = useState(false);
   const [gameOver, setGameOver] = useState(false);
@@ -61,11 +61,21 @@ export default AppStack = () => {
 
       const storageStage = parseInt(await AsyncStorage.getItem("STAGE"));
       const storageScore = parseInt(await AsyncStorage.getItem("TOTAL_SCORE"));
+      const storageGameEnd = await AsyncStorage.getItem("GAME_END");
+
       if (storageStage && storageScore) {
-        setGameInfo({
-          stage: storageStage,
-          totalScore: storageScore,
-        });
+        if (storageGameEnd === "true") {
+          setGameInfo({
+            stage: storageStage,
+            totalScore: storageScore,
+            gameEnd: true,
+          });
+        } else {
+          setGameInfo({
+            stage: storageStage,
+            totalScore: storageScore,
+          });
+        }
       }
 
       setLoading(false);
@@ -113,7 +123,17 @@ export default AppStack = () => {
   ) : (
     <View style={styles.screen}>
       <StatusBar hidden={true} />
-      <Header title={startGame ? `STAGE ${stage}` : "Guess My Number"} />
+      <Header
+        title={
+          startGame
+            ? stage === 110
+              ? gameOver
+                ? "Congratulation!"
+                : `STAGE ${stage}`
+              : `STAGE ${stage}`
+            : "Guess My Number"
+        }
+      />
       <View style={styles.body}>
         {startGame ? (
           gameOver ? (
