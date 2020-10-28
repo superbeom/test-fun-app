@@ -25,7 +25,7 @@
         "NSAllowsArbitraryLoadsForMedia": true,
         "NSAllowsArbitraryLoadsInWebContent": true,
         "config": {
-          "googleMobileAdsAppId": ""
+          "googleMobileAdsAppId": "ca-app-pub-8452350078553076~4893860183"
         }
       }
     },

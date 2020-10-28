@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
-  Text,
   Image,
   StatusBar,
   BackHandler,
   Alert,
+  Platform,
 } from "react-native";
 import * as Font from "expo-font";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -156,12 +156,21 @@ export default AppStack = () => {
         )}
       </View>
       <View style={styles.ads}>
-        <AdMobBanner
-          bannerSize="banner"
-          adUnitID="ca-app-pub-8452350078553076/1201510269" // This is my ID
-          servePersonalizedAds={true}
-          onDidFailToReceiveAdWithError={this.bannerError}
-        />
+        {Platform.OS === "ios" ? (
+          <AdMobBanner
+            bannerSize="banner"
+            adUnitID="ca-app-pub-8452350078553076/5289940846" // This is my ID
+            servePersonalizedAds={true}
+            onDidFailToReceiveAdWithError={this.bannerError}
+          />
+        ) : (
+          <AdMobBanner
+            bannerSize="banner"
+            adUnitID="ca-app-pub-8452350078553076/1201510269" // This is my ID
+            servePersonalizedAds={true}
+            onDidFailToReceiveAdWithError={this.bannerError}
+          />
+        )}
       </View>
     </View>
   );
