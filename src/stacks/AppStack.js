@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import * as Font from "expo-font";
 import AsyncStorage from "@react-native-community/async-storage";
+import { AdMobBanner } from "expo-ads-admob";
 
 import { GameContext } from "../context/GameContext";
 import getScore from "../utils/getScore";
@@ -155,7 +156,12 @@ export default AppStack = () => {
         )}
       </View>
       <View style={styles.ads}>
-        <Text>This is Ads Area</Text>
+        <AdMobBanner
+          bannerSize="banner"
+          adUnitID="ca-app-pub-8452350078553076/1201510269" // This is my ID
+          servePersonalizedAds={true}
+          onDidFailToReceiveAdWithError={this.bannerError}
+        />
       </View>
     </View>
   );
