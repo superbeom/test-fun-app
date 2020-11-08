@@ -2,7 +2,7 @@
   "expo": {
     "name": "Guess My Number",
     "slug": "number-matching-game",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -18,7 +18,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.heungdo.guessmynumber",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.0.1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSAllowsArbitraryLoads": true,
@@ -31,7 +31,7 @@
     },
     "android": {
       "package": "com.heungdo.guessmynumber",
-      "versionCode": 1,
+      "versionCode": 2,
       "permissions": [],
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-8452350078553076~9442962366"
