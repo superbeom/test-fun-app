@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { AdMobBanner } from "expo-ads-admob";
 
 import { GameContext } from "../context/GameContext";
+import { APP_NAME, CONGRATULATIONS } from "../constants/strings";
 import getScore from "../utils/getScore";
 
 import Header from "../components/Header";
@@ -129,10 +130,10 @@ export default AppStack = () => {
           startGame
             ? stage === 110
               ? gameOver
-                ? "Congratulation!"
+                ? CONGRATULATIONS
                 : `STAGE ${stage}`
               : `STAGE ${stage}`
-            : "Guess My Number"
+            : APP_NAME
         }
       />
       <View style={styles.body}>

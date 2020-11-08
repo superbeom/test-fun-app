@@ -14,15 +14,20 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 
 import { GameContext } from "../context/GameContext";
+import {
+  YOUR_PICKS,
+  GO_HOME,
+  CHECK_GO_HOME,
+  INVALID_NUMBER,
+} from "../constants/strings";
+import colors from "../constants/colors";
+import checkStage from "../utils/checkStage";
 
 import MainButton from "../components/MainButton";
 import BodyText from "../components/BodyText";
 import DoneButton from "../components/DoneButton";
 import Card from "../components/Card";
 import Input from "../components/Input";
-import colors from "../constants/colors";
-import { YOUR_PICKS, GO_HOME } from "../constants/strings";
-import checkStage from "../utils/checkStage";
 
 const SIZE = vw(25);
 
@@ -78,7 +83,7 @@ const GameScreen = ({ onGameOver, onGoHome, setRound }) => {
 
   const checkGoHome = () => {
     Alert.alert(
-      "Seriously go home?",
+      CHECK_GO_HOME,
       "",
       [
         { text: "Cancel", style: "cancel" },
@@ -103,7 +108,7 @@ const GameScreen = ({ onGameOver, onGoHome, setRound }) => {
     }
 
     if (isNaN(chosenNumber)) {
-      Alert.alert("Invalid number!", "", [
+      Alert.alert(INVALID_NUMBER, "", [
         { text: "Okay", style: "destructive", onPress: () => null },
       ]);
       return;

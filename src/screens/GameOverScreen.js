@@ -4,17 +4,19 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { vh } from "react-native-expo-viewport-units";
 
 import { GameContext } from "../context/GameContext";
-
-import Card from "../components/Card";
-import TitleText from "../components/TitleText";
-import MainButton from "../components/MainButton";
-import StageButton from "../components/StageButton";
 import {
   STAGE_SCORE,
   PLAY_AGAIN,
   NEXT_STAGE,
   GO_HOME,
+  HOLD_ON,
+  CHECK_GO_HOME_OVER,
 } from "../constants/strings";
+
+import Card from "../components/Card";
+import TitleText from "../components/TitleText";
+import MainButton from "../components/MainButton";
+import StageButton from "../components/StageButton";
 
 const GameOverScreen = ({ onPlayAgain, onGoHome, onStartGame, score }) => {
   const [{ stage, totalScore }, setGameInfo] = useContext(GameContext);
@@ -65,7 +67,7 @@ const GameOverScreen = ({ onPlayAgain, onGoHome, onStartGame, score }) => {
   };
 
   const backAction = () => {
-    Alert.alert("Hold on!", "Are you sure you want to go home?", [
+    Alert.alert(HOLD_ON, CHECK_GO_HOME_OVER, [
       {
         text: "Cancel",
         onPress: () => null,

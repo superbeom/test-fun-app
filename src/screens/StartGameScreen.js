@@ -12,17 +12,18 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { vw, vh } from "react-native-expo-viewport-units";
 
 import { GameContext } from "../context/GameContext";
-
-import colors from "../constants/colors";
-import Card from "../components/Card";
-import StartButton from "../components/StartButton";
-import MainButton from "../components/MainButton";
 import {
   YOUR_SCORE,
   CURRENT_STAGE,
   GAME_START,
   RESET_GAME,
+  CONGRATULATIONS,
 } from "../constants/strings";
+import colors from "../constants/colors";
+
+import Card from "../components/Card";
+import StartButton from "../components/StartButton";
+import MainButton from "../components/MainButton";
 
 const StartGameScreen = ({ onStartGame }) => {
   const [{ stage, totalScore, gameEnd }, setGameInfo] = useContext(GameContext);
@@ -32,6 +33,7 @@ const StartGameScreen = ({ onStartGame }) => {
     setGameInfo({
       stage: 1,
       totalScore: 0,
+      gameEnd: false,
     });
     /* AsyncStorage reset */
     await AsyncStorage.clear();
@@ -67,7 +69,7 @@ const StartGameScreen = ({ onStartGame }) => {
                     { color: colors.primaryColor, fontWeight: "800" },
                   ]}
                 >
-                  CONGRATULATIONS!!
+                  {CONGRATULATIONS}
                 </Text>
               ) : (
                 <>
