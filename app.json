@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Guess My Number",
-    "slug": "number-matching-game",
-    "version": "1.0.1",
+    "name": "Test Fun App",
+    "slug": "test-fun-app",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,24 +17,24 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.heungdo.guessmynumber",
-      "buildNumber": "1.0.1",
+      "bundleIdentifier": "com.heungdo.testfunapp",
+      "buildNumber": "1.0.0",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSAllowsArbitraryLoads": true,
         "NSAllowsArbitraryLoadsForMedia": true,
         "NSAllowsArbitraryLoadsInWebContent": true,
         "config": {
-          "googleMobileAdsAppId": "ca-app-pub-8452350078553076~4893860183"
+          "googleMobileAdsAppId": "ca-app-pub-8452350078553076~8582636797"
         }
       }
     },
     "android": {
-      "package": "com.heungdo.guessmynumber",
-      "versionCode": 2,
+      "package": "com.heungdo.testfunapp",
+      "versionCode": 1,
       "permissions": [],
       "config": {
-        "googleMobileAdsAppId": "ca-app-pub-8452350078553076~9442962366"
+        "googleMobileAdsAppId": "ca-app-pub-8452350078553076~5172824109"
       }
     },
     "web": {
